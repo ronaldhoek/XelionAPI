@@ -1,0 +1,237 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 550
+  ClientWidth = 577
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object btnLogon: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 32.000000000000000000
+    TabOrder = 1
+    Text = 'Logon'
+    OnClick = btnLogonClick
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    TextSettings.WordWrap = True
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 561.000000000000000000
+    Size.Height = 262.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Viewport.Width = 557.000000000000000000
+    Viewport.Height = 258.000000000000000000
+  end
+  object btnLogout: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 56.000000000000000000
+    TabOrder = 8
+    Text = 'Logout'
+    OnClick = btnLogoutClick
+  end
+  object btnTestGet: TButton
+    Position.X = 8.000000000000000000
+    Position.Y = 152.000000000000000000
+    TabOrder = 9
+    Text = 'Test get =>'
+    OnClick = btnTestGetClick
+  end
+  object edtResource: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 10
+    Position.X = 96.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 473.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtHost: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 17
+    Text = 'https://pbx02.belise.nl'
+    Position.X = 72.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 321.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtTenant: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 20
+    Text = '100242'
+    Position.X = 440.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 89.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object lblHost: TLabel
+    AutoSize = True
+    Position.X = 8.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 16.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Host'
+    TabOrder = 22
+  end
+  object lblTenant: TLabel
+    AutoSize = True
+    Position.X = 400.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 16.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Tenant'
+    TabOrder = 21
+  end
+  object edtUsername: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 14
+    Position.X = 72.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtPassword: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 15
+    Position.X = 264.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 177.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object lblUsername: TLabel
+    AutoSize = True
+    Position.X = 8.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 16.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Username'
+    TabOrder = 19
+  end
+  object lblPassword: TLabel
+    AutoSize = True
+    Position.X = 208.000000000000000000
+    Position.Y = 32.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 16.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Password'
+    TabOrder = 16
+  end
+  object edtToken: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 24
+    ReadOnly = True
+    Position.X = 72.000000000000000000
+    Position.Y = 56.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object lblToken: TLabel
+    AutoSize = True
+    Position.X = 8.000000000000000000
+    Position.Y = 56.000000000000000000
+    Size.Width = 57.000000000000000000
+    Size.Height = 16.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Token'
+    TabOrder = 18
+  end
+  object Label1: TLabel
+    Cursor = crHandPoint
+    StyledSettings = [Family, Size]
+    HitTest = True
+    Position.X = 72.000000000000000000
+    Position.Y = 120.000000000000000000
+    Size.Width = 345.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {04040000000000000004000000}
+    TextSettings.FontColor = claBlue
+    Text = 'https://partner.xelion.com/files/public/user-guide/index.html'
+    TabOrder = 28
+    OnClick = Label1Click
+  end
+  object btnTest: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 120.000000000000000000
+    Size.Width = 81.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 29
+    Text = 'Test'
+    OnClick = btnTestClick
+  end
+  object btnRenew: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 80.000000000000000000
+    TabOrder = 33
+    Text = 'Renew'
+    OnClick = btnRenewClick
+  end
+  object edtTokenExpires: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 23
+    ReadOnly = True
+    Position.X = 72.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object mmMonitor: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    ReadOnly = True
+    Anchors = [akLeft, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 445.000000000000000000
+    Size.Width = 561.000000000000000000
+    Size.Height = 97.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 37
+    Viewport.Width = 557.000000000000000000
+    Viewport.Height = 93.000000000000000000
+  end
+  object tmrMonitor: TTimer
+    OnTimer = tmrMonitorTimer
+    Left = 272
+    Top = 264
+  end
+  object reqLogon: TRESTRequest
+    Client = RESTClient1
+    Method = rmPOST
+    Params = <>
+    Resource = 'me/login'
+    Response = respLogon
+    SynchronizedEvents = False
+    Left = 120
+    Top = 272
+  end
+  object respLogon: TRESTResponse
+    Left = 120
+    Top = 336
+  end
+  object RESTClient1: TRESTClient
+    BaseURL = 'https://pbx02.belise.nl/api/v1/100242'
+    Params = <>
+    HandleRedirects = True
+    Left = 176
+    Top = 184
+  end
+end
