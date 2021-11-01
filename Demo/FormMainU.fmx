@@ -16,7 +16,7 @@ object Form1: TForm1
     Text = 'Logon'
     OnClick = btnLogonClick
   end
-  object Memo1: TMemo
+  object mmLog: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
     TextSettings.WordWrap = True
@@ -230,7 +230,6 @@ object Form1: TForm1
   object RESTClient1: TRESTClient
     BaseURL = 'https://pbx02.belise.nl/api/v1/100242'
     Params = <>
-    HandleRedirects = True
     Left = 176
     Top = 184
   end

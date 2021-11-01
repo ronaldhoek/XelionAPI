@@ -8,7 +8,7 @@ uses
   REST.Client, REST.Authenticator.Basic, Data.Bind.Components,
   Data.Bind.ObjectScope, FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox,
   FMX.Memo, FMX.Edit, Xelion.DataModel, Xelion.Classes.Request,
-  Xelion.Classes.Response;
+  Xelion.Classes.Response, REST.Types;
 
 type
   TXelionTokenInfo = class
@@ -22,40 +22,42 @@ type
 
   TForm1 = class(TForm)
     btnLogon: TButton;
+    btnLogout: TButton;
+    btnRenew: TButton;
+    btnTest: TButton;
+    btnTestGet: TButton;
+    edtHost: TEdit;
+    edtPassword: TEdit;
+    edtResource: TEdit;
+    edtTenant: TEdit;
+    edtToken: TEdit;
+    edtTokenExpires: TEdit;
+    edtUsername: TEdit;
+    Label1: TLabel;
+    lblHost: TLabel;
+    lblPassword: TLabel;
+    lblTenant: TLabel;
+    lblToken: TLabel;
+    lblUsername: TLabel;
+    mmLog: TMemo;
+    mmMonitor: TMemo;
     reqLogon: TRESTRequest;
     respLogon: TRESTResponse;
-    Memo1: TMemo;
     RESTClient1: TRESTClient;
-    btnLogout: TButton;
-    btnTestGet: TButton;
-    edtResource: TEdit;
-    edtHost: TEdit;
-    edtTenant: TEdit;
-    lblHost: TLabel;
-    lblTenant: TLabel;
-    edtUsername: TEdit;
-    edtPassword: TEdit;
-    lblUsername: TLabel;
-    lblPassword: TLabel;
-    edtToken: TEdit;
-    lblToken: TLabel;
-    Label1: TLabel;
-    btnTest: TButton;
-    btnRenew: TButton;
-    edtTokenExpires: TEdit;
-    mmMonitor: TMemo;
     tmrMonitor: TTimer;
-    procedure FormCreate(Sender: TObject);
     procedure btnLogonClick(Sender: TObject);
     procedure btnLogoutClick(Sender: TObject);
     procedure btnRenewClick(Sender: TObject);
-    procedure btnTestGetClick(Sender: TObject);
     procedure btnTestClick(Sender: TObject);
+    procedure btnTestGetClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure Label1Click(Sender: TObject);
     procedure tmrMonitorTimer(Sender: TObject);
   private
     FSessionAuthToken: TXelionTokenInfo;
+    procedure AddLog(const Info: string);
     procedure CheckAuthenticated;
+    procedure ClearLog;
     procedure Logon(const aUserName, aPassword: string);
     procedure LogonRenew;
     procedure Logout;
@@ -93,12 +95,15 @@ end;
 
 {$R *.fmx}
 
-procedure TForm1.FormCreate(Sender: TObject);
+destructor TForm1.Destroy;
 begin
-  FSessionAuthToken := TXPlatform.RetrieveSecret<TXelionTokenInfo>(sSecretNameToken);
-  if (FSessionAuthToken <> nil) and (FSessionAuthToken.Token = '') then
-    FreeAndNil(FSessionAuthToken);
-  UpdateTokenInfo;
+  FreeAndNil(FSessionAuthToken);
+  inherited;
+end;
+
+procedure TForm1.AddLog(const Info: string);
+begin
+  mmLog.Lines.Add(Info);
 end;
 
 procedure TForm1.btnLogonClick(Sender: TObject);
@@ -116,31 +121,15 @@ begin
   LogonRenew;
 end;
 
-procedure TForm1.btnTestGetClick(Sender: TObject);
-var
-  conn: TXelionConnection;
-begin
-  CheckAuthenticated;
-  Memo1.Lines.Clear;
-
-  conn := TXelionConnection.Create(edtHost.Text, edtTenant.Text);
-  try
-    conn.AuthToken := FSessionAuthToken.Token;
-    Memo1.Lines.Add(conn.Execute(edtResource.Text, rtGet));
-  finally
-    conn.Free;
-  end;
-end;
-
 procedure TForm1.btnTestClick(Sender: TObject);
 
   procedure ShowLinks(aRestObj: TRESTObject);
   var
     lnk: TLink;
   begin
-    Memo1.Lines.Add('Link count: ' + Length(aRestObj.links).ToString);
+    AddLog('Link count: ' + Length(aRestObj.links).ToString);
     for lnk in aRestObj.links do
-      Memo1.Lines.Add('- ' + lnk.rel + '-' + lnk.method + ':' + lnk.href );
+      AddLog('- ' + lnk.rel + '-' + lnk.method + ':' + lnk.href );
   end;
 
 var
@@ -158,7 +147,7 @@ var
   pres: TPresenceData;
 begin
   CheckAuthenticated;
-  Memo1.Lines.Clear;
+  ClearLog;
 
   conn := TXelionConnection.Create(edtHost.Text, edtTenant.Text);
   try
@@ -166,91 +155,107 @@ begin
 
     sr := conn.Execute<TStatusResponse>('me/status', rtGet);
     try
-      Memo1.Lines.Add('me/status: ' + sr.Object_);
+      AddLog('me/status: ' + sr.Object_);
 //      ShowLinks(sr);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       sr.Free;
     end;
 
     ir := conn.Execute<TInfoResponse>('me/info', rtGet);
     try
-      Memo1.Lines.Add('me/info: ' + ir.object_.userId.ToString + ', ' + ir.object_.person.commonName + ' (' + ir.object_.presenceInfo.status + ')');
+      AddLog('me/info: ' + ir.object_.userId.ToString + ', ' + ir.object_.person.commonName + ' (' + ir.object_.presenceInfo.status + ')');
 //      ShowLinks(ir);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       ir.Free;
     end;
 
     psr := conn.Execute<TPhoneSettingsResponse>('me/phone/settings', rtGet);
     try
-      Memo1.Lines.Add('me/phone/settings');
-      Memo1.Lines.Add('Redirect: ' + psr.object_.redirection + ' (Active: ' + psr.object_.redirectionActive.ToString() + ')');
+      AddLog('me/phone/settings');
+      AddLog('Redirect: ' + psr.object_.redirection + ' (Active: ' + psr.object_.redirectionActive.ToString() + ')');
 //      ShowLinks(psr);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       psr.Free;
     end;
 
     cr := conn.Execute<TCommunicationsResponse>('communications', rtGet);
     try
-      Memo1.Lines.Add('Communications: ' + Length(cr.data).ToString);
+      AddLog('Communications: ' + Length(cr.data).ToString);
       for comm in cr.data do
       begin
-        Memo1.Lines.Add('- ' + comm.object_.oid.ToString + ' (' + comm.object_.Date + ') ' +
+        AddLog('- ' + comm.object_.oid.ToString + ' (' + comm.object_.Date + ') ' +
           comm.object_.commonName + ' (' + comm.object_.status + Iif(comm.object_.displayed, 'T','F') + ')');
         //ShowLinks(comm);
       end;
 //      ShowLinks(cr.meta);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       cr.Free;
     end;
 
     ar := conn.Execute<TAddressablesResponse>('addressables', rtGet);;
     try
-      Memo1.Lines.Add('Addressables: ' + Length(ar.data).ToString);
+      AddLog('Addressables: ' + Length(ar.data).ToString);
       for addr in ar.data do
       begin
-        Memo1.Lines.Add('- ' + addr.object_.commonName + ' (' + addr.object_.oid.ToString + ') ' + addr.object_.objectType);
+        AddLog('- ' + addr.object_.commonName + ' (' + addr.object_.oid.ToString + ') ' + addr.object_.objectType);
         //ShowLinks(addr);
       end;
 //      ShowLinks(ar.meta);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       ar.Free;
     end;
 
     clr := conn.Execute<TCallablesResponse>('callables', rtGet);;
     try
-      Memo1.Lines.Add('Callables: ' + Length(clr.data).ToString);
+      AddLog('Callables: ' + Length(clr.data).ToString);
       for call in clr.data do
       begin
-        Memo1.Lines.Add('- ' + call.object_.commonName + ' (' + call.object_.chatSessionId + ') ' + call.object_.phoneNumber);
+        AddLog('- ' + call.object_.commonName + ' (' + call.object_.chatSessionId + ') ' + call.object_.phoneNumber);
         if call.object_.isUser and Assigned(call.object_.presenceInfo) then
-          Memo1.Lines.Add('  * status: ' + call.object_.presenceInfo.status);
+          AddLog('  * status: ' + call.object_.presenceInfo.status);
         //ShowLinks(addr);
       end;
 //      ShowLinks(ar.meta);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       clr.Free;
     end;
 
     pr := conn.Execute<TPresenceResponse>('presence', rtGet);;
     try
-      Memo1.Lines.Add('Presence: ' + Length(pr.data).ToString);
+      AddLog('Presence: ' + Length(pr.data).ToString);
       for pres in pr.data do
       begin
-        Memo1.Lines.Add('- ' + pres.object_.name + ' (' + pres.object_.id + ') ' + pres.object_.status);
+        AddLog('- ' + pres.object_.name + ' (' + pres.object_.id + ') ' + pres.object_.status);
         //ShowLinks(addr);
       end;
 //      ShowLinks(ar.meta);
-      Memo1.Lines.Add('');
+      AddLog('');
     finally
       pr.Free;
     end;
 
+  finally
+    conn.Free;
+  end;
+end;
+
+procedure TForm1.btnTestGetClick(Sender: TObject);
+var
+  conn: TXelionConnection;
+begin
+  CheckAuthenticated;
+  ClearLog;
+
+  conn := TXelionConnection.Create(edtHost.Text, edtTenant.Text);
+  try
+    conn.AuthToken := FSessionAuthToken.Token;
+    AddLog(conn.Execute(edtResource.Text, rtGet));
   finally
     conn.Free;
   end;
@@ -262,10 +267,17 @@ begin
     raise Exception.Create('Login first!');
 end;
 
-destructor TForm1.Destroy;
+procedure TForm1.ClearLog;
 begin
-  FreeAndNil(FSessionAuthToken);
-  inherited;
+  mmLog.Lines.Clear;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  FSessionAuthToken := TXPlatform.RetrieveSecret<TXelionTokenInfo>(sSecretNameToken);
+  if (FSessionAuthToken <> nil) and (FSessionAuthToken.Token = '') then
+    FreeAndNil(FSessionAuthToken);
+  UpdateTokenInfo;
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
